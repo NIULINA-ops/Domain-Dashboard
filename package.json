@@ -10,8 +10,15 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@vueuse/core": "8.7.5",
+    "@vueuse/integrations": "8.7.5",
     "element-plus": "^2.3.12",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "axios": "0.27.2",
+    "vue-router": "^4.0.16",
+    "quarkd": "^1.0.57",
+    "moment": "^2.30.1",
+    "js-cookie": "2.2.0"
   },
   "devDependencies": {
     "@iconify-json/ep": "^1.1.12",
