@@ -23,32 +23,32 @@ let dashboardData = ref({
     weekString: 'Number of domain name applications this week',
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
-    weekCollegeCount: [],
+    weekCollegeCount: {},
     month: 0,
     monthString: 'Number of domain name applications this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
-    monthCollegeCount: [],
+    monthCollegeCount: {},
     total: 0,
     totalString: 'Total number of domain name application',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
-    allCollegeCount: []
+    allCollegeCount: {}
   },
   'sites': {
     week: 0,
     weekString: 'Number of websites launched this week',
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
-    weekCollegeCount: [],
+    weekCollegeCount: {},
     month: 0,
     monthString: 'Number of websites launched this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
-    monthCollegeCount: [],
+    monthCollegeCount: {},
     total: 0,
     totalString: 'Total number of online websites',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
-    allCollegeCount: []
+    allCollegeCount: {}
   },
 });
 const updateActiveCard = (t) => {
@@ -108,6 +108,8 @@ const _getLocalDomain = async () => {
   // 先获取总体数据
   const domainData = dashboardData.value['domain'];
   domainData.total = res.total;
+
+  const siteData = dashboardData.value['sites'];
   for (let i = 0; i < res.data.length; i++) {
     const l = res.data[i];
     let college = collegeMap[l.college.slice(0, 3)];
@@ -135,6 +137,31 @@ const _getLocalDomain = async () => {
 
     domainData.allCount[year] = !domainData.allCount[year] ? 1 : domainData.allCount[year] + 1;
     domainData.allCollegeCount[college] = !domainData.allCollegeCount[college] ? 1 : domainData.allCollegeCount[college] + 1;
+
+    if (l.status === '2' || l.status === '4') {
+      // 处理本周数据
+      const upTime = moment.unix(l.uptime);
+      const upYear = upTime.year();
+      if (now.diff(upTime, 'weeks') < 1) {
+        siteData.week = siteData.week + 1;
+        const week = upTime.format('dddd');
+        siteData.weekCount[week] = !siteData.weekCount[week] ? 1 : siteData.weekCount[week] + 1;
+        siteData.weekCollegeCount[college] = !siteData.weekCollegeCount[college] ? 1 : siteData.weekCollegeCount[college] + 1;
+      }
+
+      // 处理本月数据
+      if (now.diff(upTime, 'months') < 1) {
+        siteData.month = siteData.month + 1;
+        const week = upTime.week() % 4;
+        siteData.monthCount[week] = !siteData.monthCount[week] ? 1 : siteData.monthCount[week] + 1;
+        siteData.monthCollegeCount[college] = !siteData.monthCollegeCount[college] ? 1 : siteData.monthCollegeCount[college] + 1;
+      }
+
+      siteData.allCount[upYear] = !siteData.allCount[upYear] ? 1 : siteData.allCount[upYear] + 1;
+      siteData.allCollegeCount[college] = !siteData.allCollegeCount[college] ? 1 : siteData.allCollegeCount[college] + 1;
+
+      siteData.total = siteData.total + 1;
+    }
   }
 
   const App = getCurrentInstance();
@@ -173,11 +200,11 @@ onMounted(() => {
                 <div class="footer-item">
                   <span>Compared to last week</span>
                   <span class="green">
-                {{dashboardData[item.name].weekCompared}}
-                <el-icon>
-                  <CaretTop />
-                </el-icon>
-              </span>
+              {{dashboardData[item.name].weekCompared}}
+              <el-icon>
+                <CaretTop />
+              </el-icon>
+            </span>
                 </div>
               </div>
             </div>
@@ -195,11 +222,11 @@ onMounted(() => {
                 <div class="footer-item">
                   <span>Compared to last month</span>
                   <span class="green">
-                {{dashboardData[item.name].monthCompared}}
-                <el-icon>
-                  <CaretTop />
-                </el-icon>
-              </span>
+              {{dashboardData[item.name].monthCompared}}
+              <el-icon>
+                <CaretTop />
+              </el-icon>
+            </span>
                 </div>
               </div>
             </div>
@@ -262,10 +289,6 @@ onMounted(() => {
 .green {
   color: green;
 }
-.red {
-  color: var(--el-color-error);
-}
-
 .card-container {
   display: flex;
   justify-content: space-around;
