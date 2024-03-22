@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Timer } from '@element-plus/icons-vue'
-import { onBeforeMount, onUpdated, onUnmounted } from 'vue'
-import { getRemoteDomain, getLocalDomain, addLocalDomain } from '~/api/index'
+import {onBeforeMount, ref, getCurrentInstance, onMounted} from 'vue'
+import {getRemoteDomain, getLocalDomain, addLocalDomain, refreshPublicIP, refreshLocalIP} from '~/api/index'
+import { ElMessage, ElLoading  } from "element-plus";
+import moment from "moment";
+import {Edit} from '@element-plus/icons-vue'
 
 interface Domain {
   _id: string
@@ -24,75 +27,197 @@ interface Domain {
   local_server_IP: string
 }
 
-onBeforeMount(() => {
-  getRemoteDomain().then(res => {
-    const listRemote = res;
-    getLocalDomain({
-      page: 1,
-      perPage: 10000
-    }).then(response => {
-      const listLocal = response.data;
-      const domainsLocal = listLocal.map(d => d.domain);
-      const needAddList = [];
-      for (let i = 0; i< listRemote.length; i++) {
-        if (domainsLocal.indexOf(listRemote[i].SQYM) === -1) {
-          needAddList.push(listRemote[i]);
-        }
+const App = getCurrentInstance();
+onMounted(async () => {
+  const { data } = await getRemoteDomain();
+  const listRemote = data;
+
+  getLocalDomain({ page: 1, perPage: 10000}).then(async response => {
+    const listLocal = response.data;
+    const domainsLocal = listLocal.map(d => d.domain);
+    const needAddList = [];
+    for (let i = 0; i< listRemote.length; i++) {
+      if (domainsLocal.indexOf(listRemote[i].SQYM) === -1) {
+        needAddList.push(listRemote[i]);
       }
-      if (needAddList.length > 0) {
-        addLocalDomain(needAddList).then(() => {
-          // $message({
-          //   message: '更新成功',
-          //   type: 'success'
-          // });
-        });
-      }
-    })
-  });
+    }
+    if (needAddList.length > 0) {
+      await addLocalDomain(needAddList);
+      ElMessage.success("本地数据库更新成功");
+    }
+
+    _getLocalDomain();
+  })
 })
 
-const handleEdit = (index: number, row: User) => {
-  console.log(index, row)
+let tableData = ref([]);
+let page = ref(1);
+let perPage = ref(20);
+let total = ref(0);
+let showAffiliation = ref(false);
+let search = ref('');
+let selectedStatus = ref('0');
+const loading = ref(false);
+const dialogFormVisible = ref(false);
+const temp = ref({});
+
+const statusOptions = [
+  {
+    label: '所有',
+    value: '0',
+    type: 'info'
+  }, {
+    label: '未解析',
+    value: '1',
+    type: 'info'
+  }, {
+    label: '上线',
+    value: '2',
+    type: 'success'
+  }, {
+    label: '未上线仅内网解析',
+    value: '3',
+    type: 'warning'
+  }, {
+    label: '异常',
+    value: '4',
+    type: 'danger'
+  }];
+const collegeMap = {
+  "912": "WIOE 西湖大学光电研究院",
+  "911": "WLLSB 西湖实验室",
+  "524": "OYC 云栖校区办公室",
+  "523": "WFP 西湖卓越学者办公室",
+  "522": "WLC 西湖语言中心",
+  "521": "OSA 学生事务部",
+  "520": "OSS 安全保障部",
+  "519": "Qiu Shi Office 求是办公室",
+  "518": "OEEP 湖心讲堂办公室",
+  "517": "CGE 通识教育中心",
+  "516": "OA 档案工作办公室",
+  "515": "OALA 审计与法务办公室",
+  "514": "OTTD 成果转化办公室",
+  "513": "OPR 政策研究室",
+  "512": "OIA 国际合作部（港澳台事务办公室）",
+  "511": "OPA 公共事务部",
+  "509": "OIC 基本建设部",
+  "508": "OP 采购工作办公室",
+  "507": "DO 发展联络部",
+  "506": "OAA 教学事务部",
+  "505": "OREC 科技合作部",
+  "504": "OGS 总务部",
+  "503": "OF 财务部",
+  "502": "OHR 人力资源部",
+  "501": "OP 校长办公室",
+  "404": "ODIS 纪检监察办公室",
+  "403": "DOUC 党委组织部",
+  "402": "OUC 党委办公室 党委统战部",
+  "401": "OPM&ODIS 党群工作部（纪检监察办公室）",
+  "301": "OIT 信息技术中心",
+  "213": "交叉科学中心",
+  "212": "WCGEA 西湖基因编辑及应用中心",
+  "211": "CSBIB 合成生物学与生物智造中心",
+  "210": "RCIF 未来产业研究中心",
+  "208": "iBio Labs 智能生物医学技术中心",
+  "207": "ITS 理论科学研究院",
+  "206": "WUMJRI 牧原集团联合院",
+  "205": "CIDR 应急医学研究中心",
+  "204": "CAPSF 人工光合作用与太阳能燃料中心",
+  "203": "RCII 智能技术研究中心",
+  "202": "WUBDJIIR 西湖大学-博智林智能机器人联合研究院",
+  "201": "OLRE 实验室与科研设施部",
+  "104": "医学院",
+  "103": "SE 工学院",
+  "102": "SS 理学院",
+  "101": "SLS 生命科学学院",
+  "1": "BO 董事会办公室",
 }
 
+const _getLocalDomain = async () => {
+  const res = await getLocalDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value});
+  tableData.value = res.data;
+  page.value = +res.page;
+  perPage.value = +res.perPage;
+  total.value = res.total;
 
-const tableData: Domain[] = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-02',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-04',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-]
+  App.proxy.$forceUpdate();
+}
+
+const _refreshPublicIP = () => {
+  loading.value = true;
+  refreshPublicIP().then(() => {
+    ElMessage.success("刷新成功");
+    loading.value = false;
+    _getLocalDomain();
+  });
+}
+
+const _refreshLocalIP = () => {
+  loading.value = true;
+  refreshLocalIP().then(() => {
+    ElMessage.success("刷新成功");
+    loading.value = false;
+    _getLocalDomain();
+  });
+}
+
+const isboda = (ip) => {
+  return ['172.16.10.92', '172.16.10.93'].indexOf(ip) > -1;
+}
+
+const istuoersi = (ip) => {
+  return ip === '172.16.10.190';
+}
+
+const statusTag = (t) => {
+  return statusOptions.find(s => s.value === t);
+}
+
+const onEdit = (row) => {
+  dialogFormVisible.value = true;
+  temp.value = row;
+}
+
 </script>
 
 <template>
-  <el-table :data="tableData" style="width: 100%">
+  <div class="filter-container">
+    <div>
+      <el-checkbox v-model="showAffiliation" label="显示归属信息" class="filter-item" style="margin-left:15px;" />
+      <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshPublicIP" style="margin-left: 24px;">
+        更新公网ip信息
+      </el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshLocalIP" style="margin-left: 24px;">
+        更新内网ip信息
+      </el-button>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center;">
+      <el-input v-model="search" placeholder="域名/名称" style="min-width: 200px;" class="filter-item"/>
+      <el-select v-model="selectedStatus" placeholder="请选择" style="min-width: 200px;">
+        <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="_getLocalDomain" style="margin-left: 24px;">
+        过滤
+      </el-button>
+    </div>
+  </div>
+  <el-table :data="tableData" v-loading="loading" style="width: 100%; max-width: 100%; height: calc(100% - 44px - 64px - 24px - 12px); margin-top: 24px;" stripe border>
     <el-table-column label="Date">
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><timer /></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          <span style="margin-left: 10px">{{ moment.unix(scope.row.apply_time).format("YYYY-MM-DD") }}</span>
         </div>
       </template>
     </el-table-column>
-    <el-table-column label="College/Unit">
+    <el-table-column label="College/Unit" v-if="showAffiliation">
       <template #default="scope">
-        {{ scope.row.college }}
+        {{ collegeMap[scope.row.college.slice(0, 3)] }}
       </template>
     </el-table-column>
     <el-table-column label="Domain">
@@ -105,17 +230,17 @@ const tableData: Domain[] = [
         {{ scope.row.title }}
       </template>
     </el-table-column>
-    <el-table-column label="Affiliation Unit">
+    <el-table-column label="Affiliation Unit" v-if="showAffiliation">
       <template #default="scope">
         {{ scope.row.affiliation_unit }}
       </template>
     </el-table-column>
-    <el-table-column label="Responsible Person">
-      <template #default="scope">
-        {{ scope.row.responsible_person }}
-      </template>
-    </el-table-column>
-    <el-table-column label="Administrator">
+<!--    <el-table-column label="Responsible Person">-->
+<!--      <template #default="scope">-->
+<!--        {{ scope.row.responsible_person }}-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+    <el-table-column label="Administrator" width="200" v-if="showAffiliation">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" width="auto">
           <template #default>
@@ -130,39 +255,71 @@ const tableData: Domain[] = [
     </el-table-column>
     <el-table-column label="Apply Scope">
       <template #default="scope">
-        {{ scope.row.apply_scope }}
+        <el-tag size="medium" v-if="scope.row.apply_scope === '1'">内网</el-tag>
+        <el-tag size="medium" v-else type="danger">外网</el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="IP">
+    <el-table-column label="IP" width="200px">
       <template #default="scope">
-        <p>Public: {{ scope.row.server_IP }}</p>
-        <p>Local: {{ scope.row.local_server_IP }}</p>
+        <span v-show="scope.row.server_IP">Public：{{ scope.row.server_IP }}<br /></span>
+        <span v-show="scope.row.local_server_IP">Local：{{ scope.row.local_server_IP }}<span v-show="isboda(scope.row.local_server_IP)">（博达）</span><span v-show="istuoersi(scope.row.local_server_IP)">（拓尔思）</span></span>
+        <span v-show="!scope.row.server_IP && !scope.row.local_server_IP">/</span>
       </template>
     </el-table-column>
     <el-table-column label="Status">
       <template #default="scope">
-        {{ scope.row.status }}
+        <el-tag size="medium" :type="statusTag(scope.row.status).type">{{statusTag(scope.row.status).label}}</el-tag>
       </template>
     </el-table-column>
     <el-table-column label="Security Incidents">
       <template #default="scope">
-        {{ scope.row.security_incidents }}
+        {{ scope.row.security_incidents ? scope.row.security_incidents : '/' }}
       </template>
     </el-table-column>
     <el-table-column label="Remark">
       <template #default="scope">
-        {{ scope.row.remark }}
+        {{ scope.row.remark ? scope.row.remark : '/' }}
       </template>
     </el-table-column>
     <el-table-column label="Operations">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-        >Edit</el-button>
+        <el-button type="primary" :icon="Edit" circle @click="() => onEdit(scope.row)"/>
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination style="float: right; margin-top: 12px;" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
+  <el-dialog title="Edit" :visible.sync="dialogFormVisible">
+    <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form-item label="Domain" prop="title">
+        <el-input v-model="temp.value.domain" disabled/>
+      </el-form-item>
+      <el-form-item label="Title" prop="title">
+        <el-input v-model="temp.value.title" disabled/>
+      </el-form-item>
+      <el-form-item label="Security Incidents">
+        <el-input v-model="temp.value.security_incidents" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+      </el-form-item>
+      <el-form-item label="Remark">
+        <el-input v-model="temp.value.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">
+        取消
+      </el-button>
+      <el-button type="primary" @click="updateData()">
+        确认
+      </el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped>
-
+  .filter-container {
+    height: 40px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 </style>

@@ -4,7 +4,7 @@ import Toast from "quarkd/lib/toast";
 // create an axios instance
 const instance = axios.create({
   withCredentials: false,
-  timeout: 5000,
+  timeout: 100000,
   baseURL: '/api'
 });
 
@@ -25,7 +25,6 @@ instance.interceptors.request.use(
   },
   (error) => {
     // do something with request error
-    console.log(error); // for debug
     return Promise.reject(error);
   },
 );
@@ -53,7 +52,6 @@ instance.interceptors.response.use(
       }
       return Promise.reject(res.message || 'Error');
     } else {
-      debugger
       return res.result;
     }
   },

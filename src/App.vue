@@ -2,9 +2,9 @@
   <el-config-provider namespace="ep">
     <BaseHeader />
     <div class="flex main-container">
-      <BaseSide />1
-      <div w="full" py="4">
-        <DomainTable />
+      <BaseSide />
+      <div style="height: 100%; width: calc(100% - 60px);">
+        <router-view></router-view>
       </div>
     </div>
   </el-config-provider>

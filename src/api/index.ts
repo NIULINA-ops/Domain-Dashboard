@@ -14,7 +14,7 @@ export function loginPassword() {
 export async function getRemoteDomain() {
   const t = Cookies.get('expiresIn');
   const now = moment();
-  if (!t || moment(t).isBefore(now)) {
+  if (!t || moment(t).isBefore(now, 's')) {
     // 需要重新请求token
     const {access_token, expires_in} = await getApiToken();
     Cookies.set('expiresIn', moment().add(expires_in, 's').valueOf());
@@ -56,16 +56,16 @@ export function getLocalDomain(params) {
   });
 }
 
-export function refreshLocalIP(params) {
+export function refreshLocalIP() {
   return useAxiosApi(`/refreshLocalIp`, {
     method: 'get',
-    params
+    params: null
   });
 }
 
-export function refreshPublicIP(params) {
+export function refreshPublicIP() {
   return useAxiosApi(`/refreshIp`, {
     method: 'get',
-    params
+    params: null
   });
 }
