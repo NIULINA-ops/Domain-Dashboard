@@ -15,12 +15,17 @@
       <el-icon><DataBoard /></el-icon>
       <template #title>Tables</template>
     </el-menu-item>
+    <el-menu-item index="/events">
+      <el-icon><Operation /></el-icon>
+      <template #title>Events</template>
+    </el-menu-item>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
 import {
+  Operation,
   DataBoard,
   Menu as IconMenu,
 } from "@element-plus/icons-vue";
