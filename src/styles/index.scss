@@ -4,18 +4,18 @@
 // :root {
 //   --ep-color-primary: red;
 // }
-
 body {
   font-family: Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
-  background-image: url("../assets/bg.jpeg");
+  background-image: url("../assets/code.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 a {
@@ -31,8 +31,10 @@ code {
 
 .forest-glass {
   border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .ep-tabs__item {

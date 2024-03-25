@@ -15,7 +15,10 @@ import "uno.css";
 // If you want to use ElMessage, import it.
 import "element-plus/theme-chalk/src/message.scss";
 
+import vueParticleLine from 'vue-particle-line'
+import 'vue-particle-line/dist/vue-particle-line.css'
 const app = createApp(App);
 // app.use(ElementPlus);
 app.use(router);
+app.use(vueParticleLine)
 app.mount("#app");

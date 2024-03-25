@@ -16,7 +16,7 @@ const editableTabs = [{
 }];
 
 let editableTabsValue = 'domain';
-let activeCard = ref('week');
+let activeCard = ref('all');
 let dashboardData = ref({
   'domain': {
     week: 0,
@@ -64,6 +64,20 @@ const fixIconUrl = (s) => {
   const imgUrl = new URL('../assets/' + s, import.meta.url).href
   return imgUrl;
 }
+
+const fixWeekData = (w) => {
+  switch (w) {
+    case 1:
+      return 'First week';
+    case 2:
+      return 'Second week';
+    case 3:
+      return 'Third week';
+    case 4:
+      return 'Fourth week';
+  }
+}
+
 const collegeMap = {
   "912": "WIOE 西湖大学光电研究院",
   "911": "WLLSB 西湖实验室",
@@ -132,7 +146,7 @@ const _getLocalDomain = async () => {
     // 处理本周数据
     if (now.diff(applyTime, 'weeks') < 1) {
       domainData.week = domainData.week + 1;
-      const week = applyTime.format('dddd');
+      const week = fixWeekData(applyTime.format('dddd'));
       domainData.weekCount[week] = !domainData.weekCount[week] ? 1 : domainData.weekCount[week] + 1;
       domainData.weekCollegeCount[college] = !domainData.weekCollegeCount[college] ? 1 : domainData.weekCollegeCount[college] + 1;
     }
@@ -140,7 +154,7 @@ const _getLocalDomain = async () => {
     // 处理本月数据
     if (now.diff(applyTime, 'months') < 1) {
       domainData.month = domainData.month + 1;
-      const week = applyTime.week() % 4;
+      const week = fixWeekData(applyTime.week() % 4);
       domainData.monthCount[week] = !domainData.monthCount[week] ? 1 : domainData.monthCount[week] + 1;
       domainData.monthCollegeCount[college] = !domainData.monthCollegeCount[college] ? 1 : domainData.monthCollegeCount[college] + 1;
     }
@@ -154,7 +168,7 @@ const _getLocalDomain = async () => {
       const upYear = upTime.year();
       if (now.diff(upTime, 'weeks') < 1) {
         siteData.week = siteData.week + 1;
-        const week = upTime.format('dddd');
+        const week = fixWeekData(upTime.format('dddd'));
         siteData.weekCount[week] = !siteData.weekCount[week] ? 1 : siteData.weekCount[week] + 1;
         siteData.weekCollegeCount[college] = !siteData.weekCollegeCount[college] ? 1 : siteData.weekCollegeCount[college] + 1;
       }
@@ -162,7 +176,7 @@ const _getLocalDomain = async () => {
       // 处理本月数据
       if (now.diff(upTime, 'months') < 1) {
         siteData.month = siteData.month + 1;
-        const week = upTime.week() % 4;
+        const week = fixWeekData(upTime.week() % 4);
         siteData.monthCount[week] = !siteData.monthCount[week] ? 1 : siteData.monthCount[week] + 1;
         siteData.monthCollegeCount[college] = !siteData.monthCollegeCount[college] ? 1 : siteData.monthCollegeCount[college] + 1;
       }
@@ -174,8 +188,20 @@ const _getLocalDomain = async () => {
     }
   }
 
-  const App = getCurrentInstance();
-  App?.proxy.$forceUpdate();
+  setTimeout(() => {
+    const App = getCurrentInstance();
+    App?.proxy.$forceUpdate();
+  }, 1000);
+
+}
+
+const handleClick = () => {
+  activeCard.value = 'week';
+  setTimeout(() => {
+    activeCard.value = 'all';
+    const App = getCurrentInstance();
+    App?.proxy.$forceUpdate();
+  }, 1000);
 }
 
 onMounted(() => {
@@ -189,15 +215,17 @@ onMounted(() => {
         v-model="editableTabsValue"
         type="card"
         class="demo-tabs"
+        @tab-click="handleClick"
     >
       <el-tab-pane
           v-for="item in editableTabs"
           :key="item.name"
           :label="item.title"
           :name="item.name"
+
       >
         <div class="card-container">
-          <el-card class="first" @click="updateActiveCard('week');">
+          <el-card class="first" :class="{'active': activeCard === 'week'}" @click="updateActiveCard('week');">
             <div class="statistic-card">
               <div>
                 <el-statistic :value="dashboardData[item.name].week" title="Number of domain name applications this week">
@@ -222,7 +250,7 @@ onMounted(() => {
               <img :src="fixIconUrl(dashboardData[item.name].weekIcon)" />
             </div>
           </el-card>
-          <el-card class="second" @click="updateActiveCard('month');">
+          <el-card class="second" :class="{'active': activeCard === 'month'}" @click="updateActiveCard('month');">
             <div class="statistic-card">
               <div>
                 <el-statistic :value="dashboardData[item.name].month" title="Number of domain name applications this month">
@@ -245,10 +273,9 @@ onMounted(() => {
                 </div>
               </div>
               <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
-              <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
             </div>
           </el-card>
-          <el-card class="third" @click="updateActiveCard('all');">
+          <el-card class="third" :class="{'active': activeCard === 'all'}" @click="updateActiveCard('all');">
             <div class="statistic-card">
               <el-statistic :value="dashboardData[item.name].total" title="Total number of domain name applications">
                 <template #title>
@@ -257,15 +284,15 @@ onMounted(() => {
                   </div>
                 </template>
               </el-statistic>
+              <img :src="fixIconUrl(dashboardData[item.name].allIcon)" />
             </div>
-            <img :src="fixIconUrl(dashboardData[item.name].allIcon)" />
           </el-card>
         </div>
         <div style="display: flex;">
-          <el-card style="width: calc(100% - 50% - 20px); margin-right: 20px;" shadow="always">
+          <el-card style="width: calc(100% - 40% - 20px); margin-right: 20px;" shadow="always">
             <pie-chart :chart-data="dashboardData[item.name][activeCard + 'CollegeCount']"/>
           </el-card>
-          <el-card style="width: 50%;" shadow="always">
+          <el-card style="width: 40%;" shadow="always">
             <line-chart :chart-data="dashboardData[item.name][activeCard + 'Count']"/>
           </el-card>
         </div>
@@ -275,6 +302,20 @@ onMounted(() => {
   </div>
 </template>
 
+
+<style>
+.statistic-card {
+  .ep-statistic {
+    font-size: 14px;
+    .ep-statistic__head, .ep-statistic__content {
+      color: white;
+    }
+    .ep-statistic__number {
+      font-size: 20px;
+    }
+  }
+}
+</style>
 <style scoped>
 .demo-tabs {
   flex: 1;
@@ -286,9 +327,10 @@ onMounted(() => {
   font-size: 24px;
   background-color: var(--el-bg-color-overlay);
   display: flex;
+  align-items: center;
+  justify-content: space-around;
   img {
     width: 50%;
-    height: 50%;
   }
 }
 .statistic-footer {
@@ -330,17 +372,19 @@ onMounted(() => {
     background-color: rgba(255,255,255,0.1);
     color: white;
 
-    :hover {
-      cursor: pointer;
-    }
+    backdrop-filter: blur(3px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
     &:last-child {
       margin-right: 0;
     }
-    &.first {
+
+    &:hover {
+      box-shadow: 0 0 30px 10px rgba(247, 147, 30, 0.2);
+      cursor: pointer;
     }
-    &.second {
-    }
-    &.third {
+    &.active {
+      box-shadow: 0 0 30px 10px rgba(247, 147, 30, 0.2);
     }
   }
 }

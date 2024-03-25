@@ -37,10 +37,20 @@ const props = defineProps({
   </div>
 </template>
 
+<style>
+.event-container {
+  .ep-timeline-item__timestamp {
+    color: var(--ep-color-primary);
+  }
+}
+</style>
 <style scoped>
   .event-container {
     width: 300px;
     height: 100%;
     margin: 24px 24px;
+    .ep-card {
+      color: white;
+    }
   }
 </style>

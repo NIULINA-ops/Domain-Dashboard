@@ -3,7 +3,7 @@
     <BaseHeader />
     <div class="flex main-container">
       <BaseSide />
-      <div class="main-content forest-glass" style="">
+      <div class="main-content forest-glass">
         <router-view></router-view>
       </div>
     </div>
@@ -14,6 +14,7 @@
 #app {
   text-align: center;
   color: var(--ep-text-color-primary);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .main-container {
@@ -25,12 +26,17 @@
     margin: 24px;
     padding: 24px;
     color: white;
+    max-height: 100%;
+    height: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
     .ep-card {
       border-radius: 20px;
-
-    }
-    .gradient-background {
+      background: none;
     }
   }
 }
 </style>
+<script setup lang="ts">
+</script>

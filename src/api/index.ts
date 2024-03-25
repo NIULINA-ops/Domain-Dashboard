@@ -49,6 +49,14 @@ export function addLocalDomain(data) {
   });
 }
 
+export function updateLocalDomain(data) {
+  debugger
+  return useAxiosApi(`/domains/update`, {
+    method: 'put',
+    data
+  });
+}
+
 export function getLocalDomain(params) {
   return useAxiosApi(`/domains`, {
     method: 'get',

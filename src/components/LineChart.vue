@@ -22,6 +22,9 @@ const { domRef, updateOptions } = useEcharts(() => ({
       }
     }
   },
+  textStyle: {
+    color: '#fff'
+  },
   legend: {
     data: ['1122']
   },
@@ -41,7 +44,7 @@ const { domRef, updateOptions } = useEcharts(() => ({
   },
   series: [
     {
-      color: '#8e9dff',
+      color: '#f7931e',
       name: 'Count',
       type: 'line',
       smooth: true,
@@ -56,7 +59,7 @@ const { domRef, updateOptions } = useEcharts(() => ({
           colorStops: [
             {
               offset: 0.25,
-              color: '#8e9dff'
+              color: '#f7931e'
             },
             {
               offset: 1,
@@ -97,9 +100,7 @@ init();
 </script>
 
 <template>
-  <NCard :bordered="false" class="card-wrapper">
-    <div ref="domRef" class="h-360px overflow-hidden"></div>
-  </NCard>
+  <div ref="domRef" class="h-360px overflow-hidden"></div>
 </template>
 
 <style scoped></style>

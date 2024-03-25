@@ -25,32 +25,43 @@ const { domRef, updateOptions } = useEcharts(() => ({
     trigger: 'item'
   },
   legend: {
-    bottom: '1%',
-    left: 'center',
+    orient: "vertical",
+    top: '5%',
+    left: 'left',
+    marginBottom: '10',
     itemStyle: {
-      borderWidth: 0
+      borderWidth: 0,
+    },
+    textStyle: {
+      color: '#fff'
     }
+  },
+  textStyle: {
+    color: '#fff'
   },
   series: [
     {
       color: ['#5da8ff', '#8e9dff', '#fedc69', '#26deca'],
       name: '',
       type: 'pie',
-      radius: ['45%', '75%'],
-      avoidLabelOverlap: false,
+      radius: ['40%', '70%'],
+      center: ["80%", "50%"],
+      avoidLabelOverlap: true,
       itemStyle: {
         borderRadius: 10,
         borderColor: '#fff',
-        borderWidth: 1
+        borderWidth: 2,
       },
       label: {
         show: false,
-        position: 'center'
+        position: 'center',
+        color: '#fff'
       },
       emphasis: {
         label: {
           show: true,
-          fontSize: '12'
+          fontSize: '12',
+          color: '#fff'
         }
       },
       labelLine: {

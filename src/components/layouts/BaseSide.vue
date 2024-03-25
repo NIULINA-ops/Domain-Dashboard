@@ -49,6 +49,8 @@ const handleClose = (key: string, keyPath: string[]) => {
     width: 48px;
     height: 48px;
     border-radius: 50%;
+    color: white;
+    margin-bottom: 8px;
     &:hover {
       background-color: var(--ep-color-primary);
       color: white;

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { Timer } from '@element-plus/icons-vue'
 import {onBeforeMount, ref, getCurrentInstance, onMounted} from 'vue'
-import {getRemoteDomain, getLocalDomain, addLocalDomain, refreshPublicIP, refreshLocalIP} from '~/api/index'
+import {
+  getRemoteDomain,
+  getLocalDomain,
+  addLocalDomain,
+  refreshPublicIP,
+  refreshLocalIP,
+  updateLocalDomain
+} from '~/api/index'
 import { ElMessage, ElLoading  } from "element-plus";
 import moment from "moment";
 import {Edit} from '@element-plus/icons-vue'
@@ -140,7 +147,7 @@ const _getLocalDomain = async () => {
   perPage.value = +res.perPage;
   total.value = res.total;
 
-  App.proxy.$forceUpdate();
+  App?.proxy.$forceUpdate();
 }
 
 const _refreshPublicIP = () => {
@@ -178,12 +185,19 @@ const onEdit = (row) => {
   temp.value = row;
 }
 
+const updateData = async () => {
+  debugger
+  const data = { id: temp.value._id, remark: temp.value.remark, security_incidents: temp.value.security_incidents };
+  const res = await updateLocalDomain(data);
+
+}
+
 </script>
 
 <template>
   <div class="filter-container">
     <div>
-      <el-checkbox v-model="showAffiliation" label="显示归属信息" class="filter-item" style="margin-left:15px;" />
+      <el-checkbox v-model="showAffiliation" label="显示归属信息" class="filter-item" style="margin-left:15px; color: white" />
       <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshPublicIP" style="margin-left: 24px;">
         更新公网ip信息
       </el-button>
@@ -202,11 +216,11 @@ const onEdit = (row) => {
         </el-option>
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="_getLocalDomain" style="margin-left: 24px;">
-        过滤
+          Filter
       </el-button>
     </div>
   </div>
-  <el-table :data="tableData" v-loading="loading" style="width: 100%; max-width: 100%; height: calc(100% - 44px - 64px - 24px - 12px); margin-top: 24px;" stripe border>
+  <el-table :data="tableData" v-loading="loading" style="width: 100%; max-width: 100%; overflow: auto; height: calc(100% - 44px - 64px - 24px - 12px); margin-top: 24px;" stripe border>
     <el-table-column label="Date">
       <template #default="scope">
         <div style="display: flex; align-items: center">
@@ -255,8 +269,8 @@ const onEdit = (row) => {
     </el-table-column>
     <el-table-column label="Apply Scope">
       <template #default="scope">
-        <el-tag size="medium" v-if="scope.row.apply_scope === '1'">内网</el-tag>
-        <el-tag size="medium" v-else type="danger">外网</el-tag>
+        <el-tag size="large" v-if="scope.row.apply_scope === '1'">内网</el-tag>
+        <el-tag size="large" v-else type="danger">外网</el-tag>
       </template>
     </el-table-column>
     <el-table-column label="IP" width="200px">
@@ -268,7 +282,7 @@ const onEdit = (row) => {
     </el-table-column>
     <el-table-column label="Status">
       <template #default="scope">
-        <el-tag size="medium" :type="statusTag(scope.row.status).type">{{statusTag(scope.row.status).label}}</el-tag>
+        <el-tag size="large" :type="statusTag(scope.row.status).type">{{statusTag(scope.row.status).label}}</el-tag>
       </template>
     </el-table-column>
     <el-table-column label="Security Incidents">
@@ -287,28 +301,28 @@ const onEdit = (row) => {
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination style="float: right; margin-top: 12px;" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
-  <el-dialog title="Edit" :visible.sync="dialogFormVisible">
-    <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+  <el-pagination style="float: right; margin-top: 12px; color: white" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
+  <el-dialog title="Edit" v-model="dialogFormVisible">
+    <el-form ref="dataForm" label-position="left" label-width="200px">
       <el-form-item label="Domain" prop="title">
-        <el-input v-model="temp.value.domain" disabled/>
+        <el-input v-model="temp.domain" disabled />
       </el-form-item>
       <el-form-item label="Title" prop="title">
-        <el-input v-model="temp.value.title" disabled/>
+        <el-input v-model="temp.title" disabled />
       </el-form-item>
       <el-form-item label="Security Incidents">
-        <el-input v-model="temp.value.security_incidents" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        <el-input v-model="temp.security_incidents" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
       </el-form-item>
       <el-form-item label="Remark">
-        <el-input v-model="temp.value.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">
-        取消
+        Cancel
       </el-button>
       <el-button type="primary" @click="updateData()">
-        确认
+        Confirm
       </el-button>
     </div>
   </el-dialog>
