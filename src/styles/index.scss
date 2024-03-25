@@ -11,6 +11,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
+  background-image: url("../assets/bg.jpeg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 a {
@@ -22,4 +27,14 @@ code {
   padding: 2px 4px;
   background-color: var(--ep-color-primary-light-9);
   color: var(--ep-color-primary);
+}
+
+.forest-glass {
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.2);
+}
+
+.ep-tabs__item {
+  color: white;
 }

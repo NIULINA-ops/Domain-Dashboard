@@ -24,15 +24,18 @@ let dashboardData = ref({
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
     weekCollegeCount: {},
+    weekIcon: '1.svg',
     month: 0,
     monthString: 'Number of domain name applications this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
     monthCollegeCount: {},
+    monthIcon: '2.svg',
     total: 0,
     totalString: 'Total number of domain name application',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
-    allCollegeCount: {}
+    allCollegeCount: {},
+    allIcon: '3.svg',
   },
   'sites': {
     week: 0,
@@ -40,19 +43,26 @@ let dashboardData = ref({
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
     weekCollegeCount: {},
+    weekIcon: '4.svg',
     month: 0,
     monthString: 'Number of websites launched this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
     monthCollegeCount: {},
+    monthIcon: '5.svg',
     total: 0,
     totalString: 'Total number of online websites',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
-    allCollegeCount: {}
+    allCollegeCount: {},
+    allIcon: '6.svg',
   },
 });
 const updateActiveCard = (t) => {
   activeCard.value = t;
+}
+const fixIconUrl = (s) => {
+  const imgUrl = new URL('../assets/' + s, import.meta.url).href
+  return imgUrl;
 }
 const collegeMap = {
   "912": "WIOE 西湖大学光电研究院",
@@ -189,46 +199,53 @@ onMounted(() => {
         <div class="card-container">
           <el-card class="first" @click="updateActiveCard('week');">
             <div class="statistic-card">
-              <el-statistic :value="dashboardData[item.name].week" title="Number of domain name applications this week">
-                <template #title>
-                  <div style="display: inline-flex; align-items: center">
-                    {{dashboardData[item.name].weekString}}
-                  </div>
-                </template>
-              </el-statistic>
-              <div class="statistic-footer">
-                <div class="footer-item">
-                  <span>Compared to last week</span>
-                  <span class="green">
+              <div>
+                <el-statistic :value="dashboardData[item.name].week" title="Number of domain name applications this week">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      {{dashboardData[item.name].weekString}}
+                    </div>
+                  </template>
+                </el-statistic>
+                <div class="statistic-footer">
+                  <div class="footer-item">
+                    <span>Compared to last week</span>
+                    <span class="green">
               {{dashboardData[item.name].weekCompared}}
               <el-icon>
                 <CaretTop />
               </el-icon>
             </span>
+                  </div>
                 </div>
               </div>
+              <img :src="fixIconUrl(dashboardData[item.name].weekIcon)" />
             </div>
           </el-card>
           <el-card class="second" @click="updateActiveCard('month');">
             <div class="statistic-card">
-              <el-statistic :value="dashboardData[item.name].month" title="Number of domain name applications this month">
-                <template #title>
-                  <div style="display: inline-flex; align-items: center">
-                    {{dashboardData[item.name].monthString}}
-                  </div>
-                </template>
-              </el-statistic>
-              <div class="statistic-footer">
-                <div class="footer-item">
-                  <span>Compared to last month</span>
-                  <span class="green">
+              <div>
+                <el-statistic :value="dashboardData[item.name].month" title="Number of domain name applications this month">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      {{dashboardData[item.name].monthString}}
+                    </div>
+                  </template>
+                </el-statistic>
+                <div class="statistic-footer">
+                  <div class="footer-item">
+                    <span>Compared to last month</span>
+                    <span class="green">
               {{dashboardData[item.name].monthCompared}}
               <el-icon>
                 <CaretTop />
               </el-icon>
             </span>
+                  </div>
                 </div>
               </div>
+              <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
+              <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
             </div>
           </el-card>
           <el-card class="third" @click="updateActiveCard('all');">
@@ -241,6 +258,7 @@ onMounted(() => {
                 </template>
               </el-statistic>
             </div>
+            <img :src="fixIconUrl(dashboardData[item.name].allIcon)" />
           </el-card>
         </div>
         <div style="display: flex;">
@@ -258,12 +276,20 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.demo-tabs {
+  flex: 1;
+}
 .statistic-card {
   height: 100%;
   padding: 20px;
   border-radius: 4px;
   font-size: 24px;
   background-color: var(--el-bg-color-overlay);
+  display: flex;
+  img {
+    width: 50%;
+    height: 50%;
+  }
 }
 .statistic-footer {
   display: flex;
@@ -294,12 +320,16 @@ onMounted(() => {
   justify-content: space-around;
   margin: 50px 0;
   .ep-card {
-    width: 480px;
+    flex: 1;
     height: 160px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     margin-right: 20px;
+    position: relative;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+
     :hover {
       cursor: pointer;
     }

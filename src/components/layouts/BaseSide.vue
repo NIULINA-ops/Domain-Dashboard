@@ -1,16 +1,17 @@
 <template>
   <el-menu
-    default-active="2"
-    class="el-menu-vertical-demo"
+    :default-active="$route.path"
+    class="el-menu-vertical-demo forest-glass"
     :collapse="isCollapse"
     @open="handleOpen"
     @close="handleClose"
+    router
   >
-    <el-menu-item index="1" @click="router.push('/dashboard')">
+    <el-menu-item index="/dashboard">
       <el-icon><icon-menu /></el-icon>
       <template #title>Dashboard</template>
     </el-menu-item>
-    <el-menu-item index="2" @click="router.push('/table')">
+    <el-menu-item index="/table">
       <el-icon><DataBoard /></el-icon>
       <template #title>Tables</template>
     </el-menu-item>
@@ -36,6 +37,27 @@ const handleClose = (key: string, keyPath: string[]) => {
 </script>
 <style>
 .el-menu-vertical-demo {
-  min-width: 60px;
+  width: 64px;
+  background: none;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 24px;
+  li {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    &:hover {
+      background-color: var(--ep-color-primary);
+      color: white;
+    }
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }
 </style>
