@@ -19,6 +19,14 @@
       <el-icon><Operation /></el-icon>
       <template #title>Events</template>
     </el-menu-item>
+    <el-menu-item index="/doubleNon">
+      <el-icon><Warning /></el-icon>
+      <template #title>Double Non</template>
+    </el-menu-item>
+    <el-menu-item index="/q&a">
+      <el-icon><MessageBox /></el-icon>
+      <template #title>Q&A</template>
+    </el-menu-item>
   </el-menu>
 </template>
 
@@ -27,6 +35,8 @@ import { ref } from "vue";
 import {
   Operation,
   DataBoard,
+  Warning,
+  MessageBox,
   Menu as IconMenu,
 } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router';
@@ -44,7 +54,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 .el-menu-vertical-demo {
   width: 64px;
   background: none;
-  height: 200px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;

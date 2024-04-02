@@ -14,7 +14,7 @@ export function loginPassword() {
 export async function getRemoteDomain() {
   const t = Cookies.get('expiresIn');
   const now = moment();
-  if (!t || moment(t).isBefore(now, 's')) {
+  if (!t || moment.unix(t).isBefore(now, 's')) {
     // 需要重新请求token
     const {access_token, expires_in} = await getApiToken();
     Cookies.set('expiresIn', moment().add(expires_in, 's').valueOf());
@@ -50,7 +50,6 @@ export function addLocalDomain(data) {
 }
 
 export function updateLocalDomain(data) {
-  debugger
   return useAxiosApi(`/domains/update`, {
     method: 'put',
     data
@@ -77,3 +76,52 @@ export function refreshPublicIP() {
     params: null
   });
 }
+
+export function getEvents(params) {
+  return useAxiosApi(`/events`, {
+    method: 'get',
+    params
+  });
+}
+
+export function addEvents(data) {
+  return useAxiosApi(`/events`, {
+    method: 'post',
+    data
+  });
+}
+
+export function getDoubleNonDomain(params) {
+  return useAxiosApi(`/doubleDomains`, {
+    method: 'get',
+    params
+  });
+}
+
+export function getQAItems(params) {
+  return useAxiosApi(`/qaItems`, {
+    method: 'get',
+    params
+  });
+}
+
+export function updateQAItems(data) {
+  return useAxiosApi(`/qaItems/update`, {
+    method: 'put',
+    data
+  });
+}
+
+export function addQAItems(data) {
+  return useAxiosApi(`/qaItems/add`, {
+    method: 'post',
+    data
+  });
+}
+
+export function deleteQAItems(id: number) {
+  return useAxiosApi(`/qaItems/delete/${id}`, {
+    method: 'delete'
+  });
+}
+

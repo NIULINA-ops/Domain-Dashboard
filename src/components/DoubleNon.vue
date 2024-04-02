@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { Timer } from '@element-plus/icons-vue'
-import {ref, getCurrentInstance, onMounted} from 'vue'
+import {onBeforeMount, ref, getCurrentInstance, onMounted} from 'vue'
 import {
   getRemoteDomain,
   getLocalDomain,
   addLocalDomain,
   refreshPublicIP,
   refreshLocalIP,
-  updateLocalDomain
+  updateLocalDomain, getDoubleNonDomain
 } from '~/api/index'
 import { ElMessage, ElLoading  } from "element-plus";
 import moment from "moment";
-import {Edit, Refresh, Search} from '@element-plus/icons-vue'
+import {Edit, Search} from '@element-plus/icons-vue'
 
 interface Domain {
   _id: string
@@ -36,26 +36,7 @@ interface Domain {
 
 const App = getCurrentInstance();
 onMounted(async () => {
-  const { data } = await getRemoteDomain();
-  const listRemote = data;
-
-  getLocalDomain({ page: 1, perPage: 10000}).then(async response => {
-    const listLocal = response.data;
-    const domainsLocal = listLocal.map(d => d.domain);
-    const needAddList = [];
-    for (let i = 0; i< listRemote.length; i++) {
-      if (domainsLocal.indexOf(listRemote[i].SQYM) === -1) {
-        needAddList.push(listRemote[i]);
-      }
-    }
-    if (needAddList.length > 0) {
-      debugger
-      await addLocalDomain(needAddList);
-      ElMessage.success("本地数据库更新成功");
-    }
-
-    _getLocalDomain();
-  })
+  _getDoubleNonDomain();
 })
 
 let tableData = ref([]);
@@ -69,28 +50,6 @@ const loading = ref(false);
 const dialogFormVisible = ref(false);
 const temp = ref({});
 
-const statusOptions = [
-  {
-    label: '所有',
-    value: '0',
-    type: 'info'
-  }, {
-    label: '未解析',
-    value: '1',
-    type: 'info'
-  }, {
-    label: '上线',
-    value: '2',
-    type: 'success'
-  }, {
-    label: '未上线仅内网解析',
-    value: '3',
-    type: 'warning'
-  }, {
-    label: '异常',
-    value: '4',
-    type: 'danger'
-  }];
 const collegeMap = {
   "912": "WIOE 西湖大学光电研究院",
   "911": "WLLSB 西湖实验室",
@@ -141,37 +100,23 @@ const collegeMap = {
   "1": "BO 董事会办公室",
 }
 
-const _getLocalDomain = async () => {
-  const res = await getLocalDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value});
+const _getDoubleNonDomain = async () => {
+  const res = await getDoubleNonDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value});
   tableData.value = res.data;
   page.value = +res.page;
   perPage.value = +res.perPage;
   total.value = res.total;
 
-  App?.proxy?.$forceUpdate();
+  App?.proxy.$forceUpdate();
 }
 
-const _refreshIP = () => {
+const _refreshPublicIP = () => {
   loading.value = true;
-  Promise.all([refreshPublicIP(), refreshLocalIP()]).then(() => {
+  refreshPublicIP().then(() => {
     ElMessage.success("刷新成功");
     loading.value = false;
-    _getLocalDomain();
   });
 }
-
-const isboda = (ip) => {
-  return ['172.16.10.92', '172.16.10.93'].indexOf(ip) > -1;
-}
-
-const istuoersi = (ip) => {
-  return ip === '172.16.10.190';
-}
-
-const statusTag = (t) => {
-  return t ? statusOptions.find(s => s.value === t) : '';
-}
-
 const onEdit = (row) => {
   dialogFormVisible.value = true;
   temp.value = row;
@@ -187,36 +132,19 @@ const updateData = async () => {
 <template>
   <div class="filter-container">
     <div>
-      <el-checkbox v-model="showAffiliation" label="Show Affiliation" class="filter-item" style="color: white" />
-      <el-button class="filter-item" type="primary" :icon="Refresh" @click="_refreshIP" style="margin-left: 24px;">
-        Refresh IP
+      <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshPublicIP" style="margin-left: 24px;">
+        更新公网ip信息
       </el-button>
     </div>
     <div style="display: flex; align-items: center; justify-content: center;">
-      <el-input v-model="search" placeholder="Domain/Title" style="min-width: 200px;" class="filter-item" clearable/>
-      <el-select v-model="selectedStatus" placeholder="Please Select" style="min-width: 200px;">
-        <el-option
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button class="filter-item" type="primary" :icon="Search" @click="_getLocalDomain" style="margin-left: 24px;">
-          Search
+      <el-input v-model="search" placeholder="域名/名称" clearable style="min-width: 200px;" class="filter-item"/>
+      <el-button class="filter-item" type="primary" :icon="Search" @click="_getDoubleNonDomain" style="margin-left: 24px;">
+        Search
       </el-button>
     </div>
   </div>
   <el-table :data="tableData" v-loading="loading" style="width: 100%; max-width: 100%; overflow: auto; height: calc(100% - 44px - 64px - 24px - 12px); margin-top: 24px;" stripe border>
-    <el-table-column label="Date">
-      <template #default="scope">
-        <div style="display: flex; align-items: center">
-          <el-icon><timer /></el-icon>
-          <span style="margin-left: 10px">{{ moment.unix(scope.row.apply_time).format("YYYY-MM-DD") }}</span>
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column label="College/Unit" v-if="showAffiliation">
+    <el-table-column label="College/Unit">
       <template #default="scope">
         {{ collegeMap[scope.row.college.slice(0, 3)] }}
       </template>
@@ -231,17 +159,12 @@ const updateData = async () => {
         {{ scope.row.title }}
       </template>
     </el-table-column>
-    <el-table-column label="Affiliation Unit" v-if="showAffiliation">
+    <el-table-column label="Affiliation Unit">
       <template #default="scope">
         {{ scope.row.affiliation_unit }}
       </template>
     </el-table-column>
-<!--    <el-table-column label="Responsible Person">-->
-<!--      <template #default="scope">-->
-<!--        {{ scope.row.responsible_person }}-->
-<!--      </template>-->
-<!--    </el-table-column>-->
-    <el-table-column label="Administrator" width="200" v-if="showAffiliation">
+    <el-table-column label="Administrator" width="200">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" width="auto">
           <template #default>
@@ -254,22 +177,9 @@ const updateData = async () => {
         </el-popover>
       </template>
     </el-table-column>
-    <el-table-column label="Apply Scope">
-      <template #default="scope">
-        <el-tag size="large" v-if="scope.row.apply_scope === '1'">内网</el-tag>
-        <el-tag size="large" v-else type="danger">外网</el-tag>
-      </template>
-    </el-table-column>
     <el-table-column label="IP" width="200px">
       <template #default="scope">
-        <span v-show="scope.row.server_IP">Public：{{ scope.row.server_IP }}<br /></span>
-        <span v-show="scope.row.local_server_IP">Local：{{ scope.row.local_server_IP }}<span v-show="isboda(scope.row.local_server_IP)">（博达）</span><span v-show="istuoersi(scope.row.local_server_IP)">（拓尔思）</span></span>
-        <span v-show="!scope.row.server_IP && !scope.row.local_server_IP">/</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="Status">
-      <template #default="scope">
-        <el-tag size="large" :type="statusTag(scope.row.status).type">{{statusTag(scope.row.status).label}}</el-tag>
+        <span v-show="scope.row.server_IP">{{ scope.row.server_IP }}</span>
       </template>
     </el-table-column>
     <el-table-column label="Security Incidents">
@@ -288,7 +198,7 @@ const updateData = async () => {
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination class="domain-pagination" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
+  <el-pagination style="float: right; margin-top: 12px; color: white" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
   <el-dialog title="Edit" v-model="dialogFormVisible">
     <el-form ref="dataForm" label-position="left" label-width="200px">
       <el-form-item label="Domain" prop="title">
@@ -316,21 +226,11 @@ const updateData = async () => {
 </template>
 
 <style scoped>
-  .filter-container {
-    height: 40px;
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-</style>
-<style>
-.domain-pagination {
-  float: right;
-  margin-top: 12px;
-  color: white;
-  .ep-pagination__total {
-    color: white;
-  }
+.filter-container {
+  height: 40px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
