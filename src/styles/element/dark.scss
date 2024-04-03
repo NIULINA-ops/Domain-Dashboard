@@ -4,6 +4,9 @@ $--colors: (
   "primary": (
     "base": #800080,
   ),
+  "2primary": (
+     "base": rgba(247, 147, 30, 0.2),
+  ),
 );
 
 @forward "element-plus/theme-chalk/src/dark/var.scss" with (

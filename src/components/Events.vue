@@ -3,27 +3,6 @@ import {Management} from '@element-plus/icons-vue'
 import {getEvents} from "~/api";
 import {getCurrentInstance, onMounted, ref, onUnmounted} from "vue";
 import moment from "moment";
-const props = defineProps({
-  chartData: {
-    type: Array,
-    default: [{
-      timestamp: '2018/4/12',
-      text: 'Tom committed 2018/4/12 20:46'
-    },{
-      timestamp: '2018/4/12',
-      text: 'Tom committed 2018/4/12 20:46'
-    },{
-      timestamp: '2018/4/12',
-      text: 'Tom committed 2018/4/12 20:46'
-    },{
-      timestamp: '2018/4/12',
-      text: 'Tom committed 2018/4/12 20:46'
-    },{
-      timestamp: '2018/4/12',
-      text: 'Tom committed 2018/4/12 20:46'
-    }]
-  }
-})
 
 onMounted(async () => {
   await _getEvents();
@@ -35,7 +14,7 @@ const _getEvents = async () => {
   tableData.value = res.data;
 
   const App = getCurrentInstance();
-  App?.proxy.$forceUpdate();
+  App?.proxy?.$forceUpdate();
 }
 
 const typeOptions = [
@@ -57,21 +36,30 @@ const typeOptions = [
   },{
     label: '仅内网解析',
     value: '5',
-  },{
-    label: '上线（手动）',
+  }, {
+    label: '仅内网解析(系统监测)',
     value: '6',
   }, {
-    label: '下线（手动）',
+    label: '上线（手动）',
     value: '7',
   }, {
-    label: '上线(系统监测)',
+    label: '上线（系统监测）',
     value: '8',
   }, {
-    label: '下线(系统监测)',
+    label: '下线（手动）',
     value: '9',
   }, {
-    label: '域名变更',
+    label: '下线（系统监测）',
     value: '10',
+  }, {
+    label: '外网转内网（手动）',
+    value: '11',
+  }, {
+    label: '外网转内网（系统监测）',
+    value: '12',
+  }, {
+    label: '域名变更',
+    value: '13',
   }];
 
 const _getType = (t) => {
@@ -85,7 +73,7 @@ const _getType = (t) => {
     <el-scrollbar height="665px">
       <el-timeline style="max-width: 600px">
         <template v-for="item in tableData">
-          <el-timeline-item :timestamp="moment(item._id).format('YYYY-MM-DD')" placement="top">
+          <el-timeline-item :timestamp="moment(+item._id.split('_')[0]).format('YYYY-MM-DD')" placement="top">
             <el-card>
               <el-tag>{{ _getType(item.events) }}</el-tag>
               <p style="word-break: break-all;">{{ item.domain + '(' + item.title + ')' }}</p>

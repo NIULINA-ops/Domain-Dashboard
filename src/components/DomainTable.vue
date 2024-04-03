@@ -5,9 +5,8 @@ import {
   getRemoteDomain,
   getLocalDomain,
   addLocalDomain,
-  refreshPublicIP,
-  refreshLocalIP,
-  updateLocalDomain
+  updateLocalDomain,
+  refreshIP
 } from '~/api/index'
 import { ElMessage, ElLoading  } from "element-plus";
 import moment from "moment";
@@ -49,7 +48,6 @@ onMounted(async () => {
       }
     }
     if (needAddList.length > 0) {
-      debugger
       await addLocalDomain(needAddList);
       ElMessage.success("本地数据库更新成功");
     }
@@ -153,18 +151,18 @@ const _getLocalDomain = async () => {
 
 const _refreshIP = () => {
   loading.value = true;
-  Promise.all([refreshPublicIP(), refreshLocalIP()]).then(() => {
+  Promise.all([refreshIP()]).then(() => {
     ElMessage.success("刷新成功");
     loading.value = false;
     _getLocalDomain();
   });
 }
 
-const isboda = (ip) => {
+const isboda = (ip: string) => {
   return ['172.16.10.92', '172.16.10.93'].indexOf(ip) > -1;
 }
 
-const istuoersi = (ip) => {
+const istuoersi = (ip: string) => {
   return ip === '172.16.10.190';
 }
 
@@ -223,7 +221,7 @@ const updateData = async () => {
     </el-table-column>
     <el-table-column label="Domain">
       <template #default="scope">
-        {{ scope.row.domain }}
+        {{ scope.row.fix_domain || scope.row.domain }}
       </template>
     </el-table-column>
     <el-table-column label="Title">

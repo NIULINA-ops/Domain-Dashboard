@@ -12,9 +12,9 @@ export function loginPassword() {
   });
 }
 export async function getRemoteDomain() {
-  const t = Cookies.get('expiresIn');
+  const t = +Cookies.get('expiresIn');
   const now = moment();
-  if (!t || moment.unix(t).isBefore(now, 's')) {
+  if (!t || moment(t).isBefore(now, 's')) {
     // 需要重新请求token
     const {access_token, expires_in} = await getApiToken();
     Cookies.set('expiresIn', moment().add(expires_in, 's').valueOf());
@@ -43,7 +43,7 @@ export function getApiToken() {
 }
 
 export function addLocalDomain(data) {
-  return useAxiosApi(`/domains`, {
+  return useAxiosApi(`/domains/add`, {
     method: 'post',
     data
   });
@@ -63,19 +63,20 @@ export function getLocalDomain(params) {
   });
 }
 
-export function refreshLocalIP() {
-  return useAxiosApi(`/refreshLocalIp`, {
-    method: 'get',
-    params: null
-  });
-}
-
-export function refreshPublicIP() {
+export function refreshIP() {
   return useAxiosApi(`/refreshIp`, {
     method: 'get',
     params: null
   });
 }
+
+export function refreshDoubleDomainsIp() {
+  return useAxiosApi(`/refreshDoubleDomainsIp`, {
+    method: 'get',
+    params: null
+  });
+}
+
 
 export function getEvents(params) {
   return useAxiosApi(`/events`, {
@@ -85,7 +86,7 @@ export function getEvents(params) {
 }
 
 export function addEvents(data) {
-  return useAxiosApi(`/events`, {
+  return useAxiosApi(`/events/add`, {
     method: 'post',
     data
   });

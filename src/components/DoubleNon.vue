@@ -2,12 +2,9 @@
 import { Timer } from '@element-plus/icons-vue'
 import {onBeforeMount, ref, getCurrentInstance, onMounted} from 'vue'
 import {
-  getRemoteDomain,
-  getLocalDomain,
-  addLocalDomain,
-  refreshPublicIP,
-  refreshLocalIP,
-  updateLocalDomain, getDoubleNonDomain
+  refreshDoubleDomainsIp,
+  updateLocalDomain,
+  getDoubleNonDomain
 } from '~/api/index'
 import { ElMessage, ElLoading  } from "element-plus";
 import moment from "moment";
@@ -107,14 +104,15 @@ const _getDoubleNonDomain = async () => {
   perPage.value = +res.perPage;
   total.value = res.total;
 
-  App?.proxy.$forceUpdate();
+  App?.proxy?.$forceUpdate();
 }
 
 const _refreshPublicIP = () => {
   loading.value = true;
-  refreshPublicIP().then(() => {
+  refreshDoubleDomainsIp().then(() => {
     ElMessage.success("刷新成功");
     loading.value = false;
+    _getDoubleNonDomain();
   });
 }
 const onEdit = (row) => {
@@ -132,7 +130,7 @@ const updateData = async () => {
 <template>
   <div class="filter-container">
     <div>
-      <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshPublicIP" style="margin-left: 24px;">
+      <el-button class="filter-item" type="primary" icon="el-icon-refresh" @click="_refreshPublicIP">
         更新公网ip信息
       </el-button>
     </div>

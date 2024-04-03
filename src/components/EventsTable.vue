@@ -39,6 +39,7 @@ interface EVENT {
   events: string
   remark: string
   detection_type: string
+  fixDomain: string
 }
 
 const App = getCurrentInstance();
@@ -131,7 +132,7 @@ const _getEvents = async () => {
 const _addEvents = async () => {
   const obj = domainData.value.find(d => d._id === temp.value.domainId);
   if (obj) {
-    const data = { id: +moment(temp.value._id), domain: obj.domain, title: obj.title, domainId: temp.value.domainId, remark: temp.value.remark, events: temp.value.events, detectionType: '1'};
+    const data = { id: +moment(temp.value._id) + '_' + temp.value.domainId, domain: obj.domain, title: obj.title, domainId: temp.value.domainId, remark: temp.value.remark, events: temp.value.events, detectionType: '1', fixDomain: temp.value.fixDomain};
     const res = await addEvents(data);
     if (res) {
       ElMessage.success("Success!");
@@ -142,7 +143,8 @@ const _addEvents = async () => {
         title: '',
         events: '',
         remark: '',
-        detection_type: '1'
+        detection_type: '1',
+        fixDomain: ''
       };
       dialogFormVisible.value = false;
       await _getEvents();
@@ -188,7 +190,7 @@ const _getType = (t: string) => {
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <el-icon><timer /></el-icon>
-          <span style="margin-left: 10px">{{ moment(scope.row._id).format("YYYY-MM-DD") }}</span>
+          <span style="margin-left: 10px">{{ moment(+scope.row._id.split('_')[0]).format("YYYY-MM-DD")}}</span>
         </div>
       </template>
     </el-table-column>
@@ -235,6 +237,9 @@ const _getType = (t: string) => {
               :value="item.value">
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="fixed Domain" v-if="temp.events === '13'">
+        <el-input v-model="temp.fixDomain" placeholder="Please input" />
       </el-form-item>
       <el-form-item label="Remark">
         <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />

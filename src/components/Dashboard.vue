@@ -146,7 +146,7 @@ const _getLocalDomain = async () => {
     // 处理本周数据
     if (now.diff(applyTime, 'weeks') < 1) {
       domainData.week = domainData.week + 1;
-      const week = fixWeekData(applyTime.format('dddd'));
+      const week = applyTime.format('dddd');
       domainData.weekCount[week] = !domainData.weekCount[week] ? 1 : domainData.weekCount[week] + 1;
       domainData.weekCollegeCount[college] = !domainData.weekCollegeCount[college] ? 1 : domainData.weekCollegeCount[college] + 1;
     }
@@ -235,17 +235,17 @@ onMounted(() => {
                     </div>
                   </template>
                 </el-statistic>
-                <div class="statistic-footer">
-                  <div class="footer-item">
-                    <span>Compared to last week</span>
-                    <span class="green">
-              {{dashboardData[item.name].weekCompared}}
-              <el-icon>
-                <CaretTop />
-              </el-icon>
-            </span>
-                  </div>
-                </div>
+<!--                <div class="statistic-footer">-->
+<!--                  <div class="footer-item">-->
+<!--                    <span>Compared to last week</span>-->
+<!--                    <span class="green">-->
+<!--                      {{dashboardData[item.name].weekCompared}}-->
+<!--                      <el-icon>-->
+<!--                        <CaretTop />-->
+<!--                      </el-icon>-->
+<!--                    </span>-->
+<!--                  </div>-->
+<!--                </div>-->
               </div>
               <img :src="fixIconUrl(dashboardData[item.name].weekIcon)" />
             </div>
@@ -260,17 +260,17 @@ onMounted(() => {
                     </div>
                   </template>
                 </el-statistic>
-                <div class="statistic-footer">
-                  <div class="footer-item">
-                    <span>Compared to last month</span>
-                    <span class="green">
-              {{dashboardData[item.name].monthCompared}}
-              <el-icon>
-                <CaretTop />
-              </el-icon>
-            </span>
-                  </div>
-                </div>
+<!--                <div class="statistic-footer">-->
+<!--                  <div class="footer-item">-->
+<!--                    <span>Compared to last month</span>-->
+<!--                    <span class="green">-->
+<!--              {{dashboardData[item.name].monthCompared}}-->
+<!--              <el-icon>-->
+<!--                <CaretTop />-->
+<!--              </el-icon>-->
+<!--            </span>-->
+<!--                  </div>-->
+<!--                </div>-->
               </div>
               <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
             </div>
@@ -380,11 +380,11 @@ onMounted(() => {
     }
 
     &:hover {
-      box-shadow: 0 0 30px 10px rgba(247, 147, 30, 0.2);
+      box-shadow: 0 0 30px 2px var(--ep-color-primary-light-7);
       cursor: pointer;
     }
     &.active {
-      box-shadow: 0 0 30px 10px rgba(247, 147, 30, 0.2);
+      box-shadow: 0 0 30px 2px var(--ep-color-primary-light-7);
     }
   }
 }
