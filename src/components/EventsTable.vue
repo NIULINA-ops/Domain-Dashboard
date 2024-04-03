@@ -87,21 +87,30 @@ const typeOptions = [
   },{
     label: '仅内网解析',
     value: '5',
-  },{
-    label: '上线（手动）',
+  }, {
+    label: '仅内网解析(系统监测)',
     value: '6',
   }, {
-    label: '下线（手动）',
+    label: '上线（手动）',
     value: '7',
   }, {
-    label: '上线(系统监测)',
+    label: '上线（系统监测）',
     value: '8',
   }, {
-    label: '下线(系统监测)',
+    label: '下线（手动）',
     value: '9',
   }, {
-    label: '域名变更',
+    label: '下线（系统监测）',
     value: '10',
+  }, {
+    label: '外网转内网（手动）',
+    value: '11',
+  }, {
+    label: '外网转内网（系统监测）',
+    value: '12',
+  }, {
+    label: '域名变更',
+    value: '13',
   }];
 
 const _getLocalDomain = async () => {
