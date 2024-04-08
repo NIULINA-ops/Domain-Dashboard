@@ -11,6 +11,7 @@ import {
 import { ElMessage, ElLoading  } from "element-plus";
 import moment from "moment";
 import {Edit, Refresh, Search} from '@element-plus/icons-vue'
+import { collegeMap } from '~/utils/const';
 
 interface Domain {
   _id: string
@@ -93,56 +94,6 @@ const statusOptions = [
     value: '4',
     type: 'danger'
   }];
-const collegeMap = {
-  "912": "WIOE 西湖大学光电研究院",
-  "911": "WLLSB 西湖实验室",
-  "524": "OYC 云栖校区办公室",
-  "523": "WFP 西湖卓越学者办公室",
-  "522": "WLC 西湖语言中心",
-  "521": "OSA 学生事务部",
-  "520": "OSS 安全保障部",
-  "519": "Qiu Shi Office 求是办公室",
-  "518": "OEEP 湖心讲堂办公室",
-  "517": "CGE 通识教育中心",
-  "516": "OA 档案工作办公室",
-  "515": "OALA 审计与法务办公室",
-  "514": "OTTD 成果转化办公室",
-  "513": "OPR 政策研究室",
-  "512": "OIA 国际合作部（港澳台事务办公室）",
-  "511": "OPA 公共事务部",
-  "509": "OIC 基本建设部",
-  "508": "OP 采购工作办公室",
-  "507": "DO 发展联络部",
-  "506": "OAA 教学事务部",
-  "505": "OREC 科技合作部",
-  "504": "OGS 总务部",
-  "503": "OF 财务部",
-  "502": "OHR 人力资源部",
-  "501": "OP 校长办公室",
-  "404": "ODIS 纪检监察办公室",
-  "403": "DOUC 党委组织部",
-  "402": "OUC 党委办公室 党委统战部",
-  "401": "OPM&ODIS 党群工作部（纪检监察办公室）",
-  "301": "OIT 信息技术中心",
-  "213": "交叉科学中心",
-  "212": "WCGEA 西湖基因编辑及应用中心",
-  "211": "CSBIB 合成生物学与生物智造中心",
-  "210": "RCIF 未来产业研究中心",
-  "208": "iBio Labs 智能生物医学技术中心",
-  "207": "ITS 理论科学研究院",
-  "206": "WUMJRI 牧原集团联合院",
-  "205": "CIDR 应急医学研究中心",
-  "204": "CAPSF 人工光合作用与太阳能燃料中心",
-  "203": "RCII 智能技术研究中心",
-  "202": "WUBDJIIR 西湖大学-博智林智能机器人联合研究院",
-  "201": "OLRE 实验室与科研设施部",
-  "104": "医学院",
-  "103": "SE 工学院",
-  "102": "SS 理学院",
-  "101": "SLS 生命科学学院",
-  "1": "BO 董事会办公室",
-  "999": "未知"
-}
 
 const _getLocalDomain = async () => {
   const res = await getLocalDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value, type: selectedType.value, sort: sortByTime.value ? '1' : '0'});

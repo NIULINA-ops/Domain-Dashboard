@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {Management} from '@element-plus/icons-vue'
+import { collegeMap } from '~/utils/const';
 defineProps<{ data: Object }>();
 </script>
 
@@ -10,9 +11,12 @@ defineProps<{ data: Object }>();
       <P>上线网站数量：{{data.count}}</P>
       <el-divider />
       <P>详情：</P>
-      <p v-for="d in data.detail">
-        {{ d.title + ' ' + d.domain + '(' + d.college + ')' }}
-      </p>
+      <ul>
+        <li v-for="d in data.detail">
+          <p>{{ collegeMap[d.college.slice(0, 3)] }}</p>
+          {{ '[' + d.title + '] ' + d.domain }}
+        </li>
+      </ul>
       <el-divider />
       <P>累计上线数量（个）: {{data.allCount}}</P>
       <P>工学院（个）: {{data['103']}}</P>
@@ -30,7 +34,7 @@ defineProps<{ data: Object }>();
   margin: 0 24px;
   padding-left: 40px;
 
-  p {
+  p, li {
     text-align: left;
     font-size: 14px;
     margin: 5px 0;
