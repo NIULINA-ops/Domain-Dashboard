@@ -95,6 +95,7 @@ const collegeMap = {
   "102": "SS 理学院",
   "101": "SLS 生命科学学院",
   "1": "BO 董事会办公室",
+  "999": "未知"
 }
 
 const _getDoubleNonDomain = async () => {

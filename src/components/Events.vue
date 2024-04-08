@@ -70,7 +70,7 @@ const _getType = (t) => {
 <template>
   <div class="event-container">
     <p class="title"><el-icon><Management /></el-icon>New Events</p>
-    <el-scrollbar height="665px">
+    <el-scrollbar height="300px">
       <el-timeline style="max-width: 600px">
         <template v-for="item in tableData">
           <el-timeline-item :timestamp="moment(+item._id.split('_')[0]).format('YYYY-MM-DD')" placement="top">
@@ -96,7 +96,7 @@ const _getType = (t) => {
 <style scoped>
   .event-container {
     width: 300px;
-    height: 100%;
+    height: 50%;
     margin: 0 24px;
     .ep-card {
       color: white;

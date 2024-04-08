@@ -40,19 +40,21 @@ onMounted(async () => {
 
   getLocalDomain({ page: 1, perPage: 10000}).then(async response => {
     const listLocal = response.data;
-    const domainsLocal = listLocal.map(d => d.domain);
-    const needAddList = [];
-    for (let i = 0; i< listRemote.length; i++) {
-      if (domainsLocal.indexOf(listRemote[i].SQYM) === -1) {
-        needAddList.push(listRemote[i]);
+    if (listLocal.length > 0) {
+      const needAddList = [];
+      for (let i = 0; i < listRemote.length; i++) {
+        if (listLocal[0]._id < (+listRemote[i]['LSH'])) {
+          needAddList.push(listRemote[i]);
+        }
       }
-    }
-    if (needAddList.length > 0) {
-      await addLocalDomain(needAddList);
-      ElMessage.success("本地数据库更新成功");
-    }
 
-    _getLocalDomain();
+      if (needAddList.length > 0) {
+        await addLocalDomain(needAddList);
+        ElMessage.success("本地数据库更新成功");
+      }
+
+      _getLocalDomain();
+    }
   })
 })
 
@@ -61,8 +63,10 @@ let page = ref(1);
 let perPage = ref(20);
 let total = ref(0);
 let showAffiliation = ref(false);
+let sortByTime = ref(false);
 let search = ref('');
 let selectedStatus = ref('0');
+let selectedType = ref('0');
 const loading = ref(false);
 const dialogFormVisible = ref(false);
 const temp = ref({});
@@ -137,10 +141,11 @@ const collegeMap = {
   "102": "SS 理学院",
   "101": "SLS 生命科学学院",
   "1": "BO 董事会办公室",
+  "999": "未知"
 }
 
 const _getLocalDomain = async () => {
-  const res = await getLocalDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value});
+  const res = await getLocalDomain({ page: page.value, perPage: perPage.value, search: search.value, status: selectedStatus.value, type: selectedType.value, sort: sortByTime.value ? '1' : '0'});
   tableData.value = res.data;
   page.value = +res.page;
   perPage.value = +res.perPage;
@@ -180,6 +185,13 @@ const updateData = async () => {
   const res = await updateLocalDomain(data);
 }
 
+const domainTypeMap = {
+  "0": "所有",
+  "1": "系统",
+  "2": "实验室网站",
+  "3": "其他网站"
+}
+
 </script>
 
 <template>
@@ -191,7 +203,16 @@ const updateData = async () => {
       </el-button>
     </div>
     <div style="display: flex; align-items: center; justify-content: center;">
+      <el-checkbox v-model="sortByTime" label="Sort by website launch date" class="filter-item" style="color: white; margin-right: 8px;" />
       <el-input v-model="search" placeholder="Domain/Title" style="min-width: 200px;" class="filter-item" clearable/>
+      <el-select v-model="selectedType" placeholder="Please Select" style="min-width: 200px;">
+        <el-option
+            v-for="item in Object.keys(domainTypeMap)"
+            :key="item"
+            :label="domainTypeMap[item]"
+            :value="item">
+        </el-option>
+      </el-select>
       <el-select v-model="selectedStatus" placeholder="Please Select" style="min-width: 200px;">
         <el-option
             v-for="item in statusOptions"
@@ -227,6 +248,11 @@ const updateData = async () => {
     <el-table-column label="Title">
       <template #default="scope">
         {{ scope.row.title }}
+      </template>
+    </el-table-column>
+    <el-table-column label="Type">
+      <template #default="scope">
+        {{ domainTypeMap[scope.row.type] }}
       </template>
     </el-table-column>
     <el-table-column label="Affiliation Unit" v-if="showAffiliation">
@@ -270,14 +296,19 @@ const updateData = async () => {
         <el-tag size="large" :type="statusTag(scope.row.status).type">{{statusTag(scope.row.status).label}}</el-tag>
       </template>
     </el-table-column>
+    <el-table-column label="Uptime">
+      <template #default="scope">
+        {{ scope.row.uptime ? moment(scope.row.uptime * 1000).format("YYYY-MM-DD") : '' }}
+      </template>
+    </el-table-column>
     <el-table-column label="Security Incidents">
       <template #default="scope">
-        {{ scope.row.security_incidents ? scope.row.security_incidents : '/' }}
+        {{ scope.row.security_incidents ? scope.row.security_incidents : '' }}
       </template>
     </el-table-column>
     <el-table-column label="Remark">
       <template #default="scope">
-        {{ scope.row.remark ? scope.row.remark : '/' }}
+        {{ scope.row.remark ? scope.row.remark : '' }}
       </template>
     </el-table-column>
     <el-table-column label="Operations">

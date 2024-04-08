@@ -67,7 +67,7 @@ const temp = ref<EVENT>({
 });
 
 const filterType = () => {
-  return typeOptions.filter(t => ['0', '8', '9'].indexOf(t.value) === -1 );
+  return typeOptions.filter(t => ['0', '6', '8', '10', '12'].indexOf(t.value) === -1 );
 }
 const typeOptions = [
   {

@@ -57,6 +57,11 @@ let dashboardData = ref({
     allIcon: '6.svg',
   },
 });
+let briefingData = ref({
+  count: 0,
+  detail: [],
+  allCount: 0
+});
 const updateActiveCard = (t) => {
   activeCard.value = t;
 }
@@ -126,6 +131,7 @@ const collegeMap = {
   "102": "SS 理学院",
   "101": "SLS 生命科学学院",
   "1": "BO 董事会办公室",
+  "999": "未知"
 }
 const _getLocalDomain = async () => {
   const res = await getLocalDomain({ page: '1', perPage: '1000'});
@@ -142,9 +148,8 @@ const _getLocalDomain = async () => {
     const applyTime = moment.unix(l.apply_time);
     const year = applyTime.year();
     const now = moment();
-
     // 处理本周数据
-    if (now.diff(applyTime, 'weeks') < 1) {
+    if (moment().startOf('week') === applyTime.startOf('week')) {
       domainData.week = domainData.week + 1;
       const week = applyTime.format('dddd');
       domainData.weekCount[week] = !domainData.weekCount[week] ? 1 : domainData.weekCount[week] + 1;
@@ -152,7 +157,7 @@ const _getLocalDomain = async () => {
     }
 
     // 处理本月数据
-    if (now.diff(applyTime, 'months') < 1) {
+    if (moment().startOf('month') === applyTime.startOf('month')) {
       domainData.month = domainData.month + 1;
       const week = fixWeekData(applyTime.week() % 4);
       domainData.monthCount[week] = !domainData.monthCount[week] ? 1 : domainData.monthCount[week] + 1;
@@ -166,7 +171,7 @@ const _getLocalDomain = async () => {
       // 处理本周数据
       const upTime = moment.unix(l.uptime);
       const upYear = upTime.year();
-      if (now.diff(upTime, 'weeks') < 1) {
+      if (moment().startOf('week') === upTime.startOf('week')) {
         siteData.week = siteData.week + 1;
         const week = fixWeekData(upTime.format('dddd'));
         siteData.weekCount[week] = !siteData.weekCount[week] ? 1 : siteData.weekCount[week] + 1;
@@ -174,9 +179,9 @@ const _getLocalDomain = async () => {
       }
 
       // 处理本月数据
-      if (now.diff(upTime, 'months') < 1) {
+      if (moment().startOf('month') === upTime.startOf('month')) {
         siteData.month = siteData.month + 1;
-        const week = fixWeekData(upTime.week() % 4);
+        const week = fixWeekData(upTime.week() % 4 + 1);
         siteData.monthCount[week] = !siteData.monthCount[week] ? 1 : siteData.monthCount[week] + 1;
         siteData.monthCollegeCount[college] = !siteData.monthCollegeCount[college] ? 1 : siteData.monthCollegeCount[college] + 1;
       }
@@ -185,13 +190,25 @@ const _getLocalDomain = async () => {
       siteData.allCollegeCount[college] = !siteData.allCollegeCount[college] ? 1 : siteData.allCollegeCount[college] + 1;
 
       siteData.total = siteData.total + 1;
+
+      if (moment().subtract(1,'months').startOf('month').valueOf() === upTime.startOf('month').valueOf()) {
+        // 上个月上线
+        briefingData.value.count++;
+        briefingData.value.detail.push(l);
+      }
+
+      if (l.type === '2' || l.type === '3') {
+        briefingData.value.allCount++;
+        const c = l.college.slice(0, 3);
+        !briefingData.value[c] ? (briefingData.value[c] = 1) : (briefingData.value[c]++);
+      }
     }
   }
 
   setTimeout(() => {
     const App = getCurrentInstance();
     App?.proxy.$forceUpdate();
-  }, 1000);
+  }, 2000);
 
 }
 
@@ -298,7 +315,11 @@ onMounted(() => {
         </div>
       </el-tab-pane>
     </el-tabs>
-    <events />
+    <div>
+      <briefing :data="briefingData"/>
+      <events />
+    </div>
+
   </div>
 </template>
 
