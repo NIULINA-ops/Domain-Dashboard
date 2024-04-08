@@ -6,6 +6,7 @@ import DoubleNon from "~/components/DoubleNon.vue";
 import QATable from "~/components/QATable.vue";
 
 const routes = [
+    { path: '/', redirect: '/dashboard' },
     {
         path:'/dashboard',
         name: Dashboard,
