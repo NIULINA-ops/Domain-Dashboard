@@ -24,18 +24,18 @@ let dashboardData = ref({
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
     weekCollegeCount: {},
-    weekIcon: '1.svg',
+    weekIcon: new URL(`../assets/1.svg`, import.meta.url).href,
     month: 0,
     monthString: 'Number of domain name applications this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
     monthCollegeCount: {},
-    monthIcon: '2.svg',
+    monthIcon: new URL(`../assets/2.svg`, import.meta.url).href,
     total: 0,
     totalString: 'Total number of domain name application',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
     allCollegeCount: {},
-    allIcon: '3.svg',
+    allIcon: new URL(`../assets/3.svg`, import.meta.url).href,
   },
   'sites': {
     week: 0,
@@ -43,18 +43,18 @@ let dashboardData = ref({
     weekCompared: 0,
     weekCount: {'Monday': 0,'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0},
     weekCollegeCount: {},
-    weekIcon: '4.svg',
+    weekIcon: new URL(`../assets/4.svg`, import.meta.url).href,
     month: 0,
     monthString: 'Number of websites launched this month',
     monthCompared: 0,
     monthCount: {'First week': 0, 'Second week': 0, 'Third week': 0, 'Fourth week': 0},
     monthCollegeCount: {},
-    monthIcon: '5.svg',
+    monthIcon: new URL(`../assets/5.svg`, import.meta.url).href,
     total: 0,
     totalString: 'Total number of online websites',
     allCount: {'2022': 0, '2023': 0, '2024': 0},
     allCollegeCount: {},
-    allIcon: '6.svg',
+    allIcon: new URL(`../assets/6.svg`, import.meta.url).href,
   },
 });
 let briefingData = ref({
@@ -213,7 +213,7 @@ onMounted(() => {
 <!--                  </div>-->
 <!--                </div>-->
               </div>
-              <img :src="fixIconUrl(dashboardData[item.name].weekIcon)" />
+              <img :src="dashboardData[item.name].weekIcon" />
             </div>
           </el-card>
           <el-card class="second" :class="{'active': activeCard === 'month'}" @click="updateActiveCard('month');">
@@ -238,7 +238,7 @@ onMounted(() => {
 <!--                  </div>-->
 <!--                </div>-->
               </div>
-              <img :src="fixIconUrl(dashboardData[item.name].monthIcon)" />
+              <img :src="dashboardData[item.name].monthIcon" />
             </div>
           </el-card>
           <el-card class="third" :class="{'active': activeCard === 'all'}" @click="updateActiveCard('all');">
@@ -250,7 +250,7 @@ onMounted(() => {
                   </div>
                 </template>
               </el-statistic>
-              <img :src="fixIconUrl(dashboardData[item.name].allIcon)" />
+              <img :src="dashboardData[item.name].allIcon" />
             </div>
           </el-card>
         </div>
