@@ -274,7 +274,7 @@ const domainTypeMap = {
     </el-table-column>
   </el-table>
   <el-pagination class="domain-pagination" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
-  <el-dialog title="Edit" v-model="dialogFormVisible">
+  <el-dialog title="Edit" v-model="dialogFormVisible" append-to-body>
     <el-form ref="dataForm" label-position="left" label-width="200px">
       <el-form-item label="Domain" prop="title">
         <el-input v-model="temp.domain" disabled />
