@@ -98,15 +98,15 @@ const _getLocalDomain = async () => {
     const year = applyTime.year();
     const now = moment();
     // 处理本周数据
-    if (moment().startOf('week') === applyTime.startOf('week')) {
+    if (moment().startOf('week').valueOf() === applyTime.startOf('week').valueOf()) {
       domainData.week = domainData.week + 1;
       const week = applyTime.format('dddd');
       domainData.weekCount[week] = !domainData.weekCount[week] ? 1 : domainData.weekCount[week] + 1;
       domainData.weekCollegeCount[college] = !domainData.weekCollegeCount[college] ? 1 : domainData.weekCollegeCount[college] + 1;
     }
-
     // 处理本月数据
-    if (moment().startOf('month') === applyTime.startOf('month')) {
+    if (moment().startOf('month').valueOf() === applyTime.startOf('month').valueOf()) {
+    
       domainData.month = domainData.month + 1;
       const week = fixWeekData(applyTime.week() % 4);
       domainData.monthCount[week] = !domainData.monthCount[week] ? 1 : domainData.monthCount[week] + 1;
@@ -120,7 +120,7 @@ const _getLocalDomain = async () => {
       // 处理本周数据
       const upTime = moment.unix(l.uptime);
       const upYear = upTime.year();
-      if (moment().startOf('week') === upTime.startOf('week')) {
+      if (moment().startOf('week').valueOf() === upTime.startOf('week').valueOf()) {
         siteData.week = siteData.week + 1;
         const week = fixWeekData(upTime.format('dddd'));
         siteData.weekCount[week] = !siteData.weekCount[week] ? 1 : siteData.weekCount[week] + 1;
@@ -128,7 +128,7 @@ const _getLocalDomain = async () => {
       }
 
       // 处理本月数据
-      if (moment().startOf('month') === upTime.startOf('month')) {
+      if (moment().startOf('month').valueOf() === upTime.startOf('month').valueOf()) {
         siteData.month = siteData.month + 1;
         const week = fixWeekData(upTime.week() % 4 + 1);
         siteData.monthCount[week] = !siteData.monthCount[week] ? 1 : siteData.monthCount[week] + 1;
