@@ -1,14 +1,8 @@
-# element-plus-vite-starter
+# Domain-Dashboard
 
 > A starter kit for Element Plus with Vite
 
-- Preview: <https://vite-starter.element-plus.org>
-
-This is an example of on-demand element-plus with [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components).
-
-> If you want to import all, it may be so simple that no examples are needed. Just follow [quickstart | Docs](https://element-plus.org/zh-CN/guide/quickstart.html) and import them.
-
-If you just want an on-demand import example `manually`, you can check [unplugin-element-plus/examples/vite](https://github.com/element-plus/unplugin-element-plus/tree/main/examples/vite).
+- Preview: <http://10.1.10.82:5656/#/dashboard>
 
 ## Project setup
 
@@ -31,8 +25,8 @@ npm run build
 ## Usage
 
 ```bash
-git clone https://github.com/element-plus/element-plus-vite-starter
-cd element-plus-vite-starter
+git clone https://github.com/NIULINA-ops/Domain-Dashboard.git
+cd Domain-Dashboard
 npm i
 npm run dev
 ```
