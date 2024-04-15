@@ -1,4 +1,4 @@
-# element-plus-vite-starter
+# Domain-Dashboard
 
 > A starter kit for Element Plus with Vite
 
