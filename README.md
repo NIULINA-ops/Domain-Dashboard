@@ -26,7 +26,7 @@ npm run build
 
 ```bash
 git clone https://github.com/NIULINA-ops/Domain-Dashboard.git
-cd element-plus-vite-starter
+cd Domain-Dashboard
 npm i
 npm run dev
 ```
