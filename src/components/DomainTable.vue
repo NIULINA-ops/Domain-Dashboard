@@ -134,6 +134,11 @@ const onEdit = (row) => {
 const updateData = async () => {
   const data = { id: temp.value._id, remark: temp.value.remark, security_incidents: temp.value.security_incidents };
   const res = await updateLocalDomain(data);
+  if (res) {
+      ElMessage.success("Success!");
+      dialogFormVisible.value = false;
+      await _getLocalDomain();
+    }
 }
 
 const domainTypeMap = {

@@ -51,7 +51,7 @@ export function addLocalDomain(data) {
 
 export function updateLocalDomain(data) {
   return useAxiosApi(`/domains/update`, {
-    method: 'put',
+    method: 'post',
     data
   });
 }
@@ -108,7 +108,7 @@ export function getQAItems(params) {
 
 export function updateQAItems(data) {
   return useAxiosApi(`/qaItems/update`, {
-    method: 'put',
+    method: 'post',
     data
   });
 }
@@ -122,7 +122,7 @@ export function addQAItems(data) {
 
 export function deleteQAItems(id: number) {
   return useAxiosApi(`/qaItems/delete/${id}`, {
-    method: 'delete'
+    method: 'post'
   });
 }
 
