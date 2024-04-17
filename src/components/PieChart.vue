@@ -28,7 +28,7 @@ const { domRef, updateOptions } = useEcharts(() => ({
     orient: "vertical",
     top: '5%',
     left: 'left',
-    marginBottom: '10',
+    marginBottom: '5',
     itemStyle: {
       borderWidth: 0,
     },
@@ -41,27 +41,19 @@ const { domRef, updateOptions } = useEcharts(() => ({
   },
   series: [
     {
-      color: ['#5da8ff', '#8e9dff', '#fedc69', '#26deca'],
-      name: '',
       type: 'pie',
       radius: ['40%', '70%'],
-      center: ["80%", "50%"],
+      center: ['80%', '50%'],
       avoidLabelOverlap: true,
-      itemStyle: {
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 2,
-      },
       label: {
         show: false,
-        position: 'center',
-        color: '#fff'
+        position: 'center'
       },
       emphasis: {
         label: {
-          show: true,
-          fontSize: '12',
-          color: '#fff'
+          show: false,
+          fontSize: 40,
+          fontWeight: 'bold'
         }
       },
       labelLine: {

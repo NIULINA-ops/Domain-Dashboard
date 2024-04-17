@@ -23,6 +23,7 @@
   justify-content: center;
   .main-content {
     width: calc(100% - 60px - 48px - 48px - 24px);
+    min-width: 1280px;
     margin: 24px;
     padding: 24px;
     color: white;

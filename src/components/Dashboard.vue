@@ -285,6 +285,13 @@ onMounted(() => {
     }
   }
 }
+.main-content {
+  .ep-tabs {
+    .ep-tabs__content {
+      overflow: visible !important;
+    }
+  }
+}
 </style>
 <style scoped>
 .demo-tabs {
@@ -358,4 +365,7 @@ onMounted(() => {
     }
   }
 }
+</style>
+<style>
+
 </style>

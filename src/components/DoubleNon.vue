@@ -149,7 +149,7 @@ const updateData = async () => {
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination style="float: right; margin-top: 12px; color: white" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getLocalDomain();}"/>
+  <el-pagination style="float: right; margin-top: 12px; color: white" background layout="total, prev, pager, next" :page-size="perPage" :total="total" @current-change="(p) => {page = p;  _getDoubleNonDomain();}"/>
   <el-dialog title="Edit" v-model="dialogFormVisible">
     <el-form ref="dataForm" label-position="left" label-width="200px">
       <el-form-item label="Domain" prop="title">
