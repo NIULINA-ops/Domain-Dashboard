@@ -18,10 +18,10 @@ export async function getRemoteDomain() {
     // 需要重新请求token
     const {access_token, expires_in} = await getApiToken();
     Cookies.set('expiresIn', moment().add(expires_in, 's').valueOf());
-    sessionStorage.setItem('at', access_token)
+    localStorage.setItem('at', access_token)
   }
 
-  const accessToken = sessionStorage.getItem('at');
+  const accessToken = localStorage.getItem('at');
   return useAxiosApi(`http://172.16.7.172:8778/open_api/customization/tgxwbymsq/full`, {
     method: 'POST',
     data: {
