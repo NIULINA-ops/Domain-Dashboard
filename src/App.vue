@@ -16,6 +16,7 @@
   color: var(--ep-text-color-primary);
   background: rgba(0, 0, 0, 0.6);
 }
+.test {}
 
 .main-container {
   height: calc(100vh - var(--ep-menu-item-height) - 3px);
