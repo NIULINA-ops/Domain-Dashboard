@@ -3,20 +3,48 @@
     <BaseHeader />
     <div class="flex main-container">
       <BaseSide />
-      <div class="main-content forest-glass">
-        <router-view></router-view>
+      <div class="main-content forest-glass" v-if="isShow">
+          <router-view></router-view>
       </div>
     </div>
   </el-config-provider>
 </template>
+<script setup lang="ts">
+import {addLocalDomain, getLocalDomain, getRemoteDomain} from "~/api";
+import {ElMessage} from "element-plus";
+import {ref} from 'vue'
 
+const isShow = ref(false);
+const refreshData =  async (): Promise<void> => {
+  const { data } = await getRemoteDomain();
+  const listRemote = data;
+
+  const response = await getLocalDomain({ page: 1, perPage: 10000});
+  const listLocal = response.data;
+  if (listLocal.length > 0) {
+    const needAddList = [];
+    for (let i = 0; i < listRemote.length; i++) {
+      if (listLocal[0]._id < (+listRemote[i]['LSH'])) {
+        needAddList.push(listRemote[i]);
+      }
+    }
+    if (needAddList.length > 0) {
+      await addLocalDomain(needAddList);
+      ElMessage.success("本地数据库更新成功");
+    }
+
+    isShow.value = true;
+  }
+}
+
+refreshData();
+</script>
 <style>
 #app {
   text-align: center;
   color: var(--ep-text-color-primary);
   background: rgba(0, 0, 0, 0.6);
 }
-.test {}
 
 .main-container {
   height: calc(100vh - var(--ep-menu-item-height) - 3px);

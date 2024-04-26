@@ -36,27 +36,7 @@ interface Domain {
 
 const App = getCurrentInstance();
 onMounted(async () => {
-  const { data } = await getRemoteDomain();
-  const listRemote = data;
-
-  getLocalDomain({ page: 1, perPage: 10000}).then(async response => {
-    const listLocal = response.data;
-    if (listLocal.length > 0) {
-      const needAddList = [];
-      for (let i = 0; i < listRemote.length; i++) {
-        if (listLocal[0]._id < (+listRemote[i]['LSH'])) {
-          needAddList.push(listRemote[i]);
-        }
-      }
-
-      if (needAddList.length > 0) {
-        await addLocalDomain(needAddList);
-        ElMessage.success("本地数据库更新成功");
-      }
-
-      _getLocalDomain();
-    }
-  })
+  _getLocalDomain();
 })
 
 let tableData = ref([]);
