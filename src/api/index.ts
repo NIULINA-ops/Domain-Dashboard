@@ -126,3 +126,10 @@ export function deleteQAItems(id: number) {
   });
 }
 
+export function deleteEvents(id: number) {
+  return useAxiosApi(`/events/delete/${id}`, {
+    method: 'post'
+  });
+}
+
+
