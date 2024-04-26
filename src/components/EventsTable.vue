@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Timer } from '@element-plus/icons-vue'
+import {Delete, Edit, Timer} from '@element-plus/icons-vue'
 import {ref, getCurrentInstance, onMounted} from 'vue'
 import {
   getLocalDomain,
   addEvents,
-  getEvents
+  getEvents,
+  deleteEvents
 } from '~/api/index'
 import moment from "moment";
 import {Plus, Filter} from '@element-plus/icons-vue'
@@ -163,6 +164,14 @@ const _getType = (t: string) => {
   return t ? typeOptions.find(s => s.value === t)?.label : '';
 }
 
+const _deleteEvents = async (id: number) => {
+  const res = await deleteEvents(id);
+  if (res.data) {
+    ElMessage.success("Success!");
+    await _getEvents();
+  }
+}
+
 </script>
 
 <template>
@@ -212,6 +221,15 @@ const _getType = (t: string) => {
     <el-table-column label="Remark">
       <template #default="scope">
         {{ scope.row.remark }}
+      </template>
+    </el-table-column>
+    <el-table-column label="Operations">
+      <template #default="scope">
+        <el-popconfirm title="Are you sure to delete this?" @confirm="_deleteEvents(scope.row._id)">
+          <template #reference>
+            <el-button :icon="Delete" circle/>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>

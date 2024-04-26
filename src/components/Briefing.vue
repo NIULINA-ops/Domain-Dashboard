@@ -8,9 +8,9 @@ defineProps<{ data: Object }>();
   <div class="briefing-container">
     <p class="title"><el-icon><Management /></el-icon>Last month's briefing</p>
     <el-scrollbar max-height="300">
-      <P>上线网站数量：{{data.count}}</P>
+      <P>Number of online websites：{{data.count}}</P>
       <el-divider />
-      <P>详情：</P>
+      <P>Details：</P>
       <ul>
         <li v-for="d in data.detail">
           <p>{{ collegeMap[d.college.slice(0, 3)] }}</p>
@@ -18,7 +18,7 @@ defineProps<{ data: Object }>();
         </li>
       </ul>
       <el-divider />
-      <P>累计上线数量（个）: {{data.allCount}}</P>
+      <P>Cumulative online quantity（个）: {{data.allCount}}</P>
       <P>工学院（个）: {{data['103']}}</P>
       <P>生科院（个）: {{data['101']}}</P>
       <P>理学院（个）: {{data['102']}}</P>
